@@ -45,6 +45,26 @@ function Player({ position, color = "#e5e7eb", scale = 1, selected = false }: { 
   </group>;
 }
 
+function Batter({ swing }: { swing: number }) {
+  return (
+    <group position={[0, 0, 9.8]}>
+      <Player position={[0, 0, 0]} color="#1e3a8a" scale={1.1} />
+      <mesh position={[0.3, 0.6, swing ? -0.2 : 0]} rotation={[swing ? -0.8 : 0, 0, 0]} castShadow>
+        <boxGeometry args={[0.08, 0.8, 0.15]} />
+        <meshStandardMaterial color="#b45309" />
+      </mesh>
+    </group>
+  );
+}
+
+function Bowler({ active }: { active: boolean }) {
+  return (
+    <group position={[0, 0, -10]}>
+      <Player position={[0, 0, active ? 1 : 0]} color="#991b1b" scale={1.1} />
+    </group>
+  );
+}
+
 function Fielders({ selectedFielder, fielding, target }: { selectedFielder:number; fielding:boolean; target:[number,number,number] }) {
   return <group>{fieldPositions.map((p,i)=>{
     const move=fielding&&i===selectedFielder;
@@ -167,4 +187,5 @@ export default function Home(){
     {phase==="inningsBreak"&&<div className="card toss"><h1>INNINGS BREAK</h1><p>{batting} finished on <b>{score}/{wickets}</b> after {over}.{ballInOver} overs.</p><p>Target for the other team: <b>{score+1}</b></p><button className="btn primary" onClick={nextInnings}>START INNINGS 2</button></div>}
     {phase==="result"&&<div className="card toss"><h1>{winner} WIN!</h1><p>Final score: <b>{score}/{wickets}</b> • {mode} overs</p><p>{commentary}</p><button className="btn primary" onClick={()=>location.reload()}>NEW MATCH</button></div>}
     </div></section></main>;
-}
+                                                          }
+                    
