@@ -129,7 +129,10 @@ export default function Home(){
   }
   function resolveFielding(r:number){
     setFielding(false);
-    const event=fieldingEvent(r>0,false); setFielderMessage(event.message);
+    const event = (fieldingEvent as any)({ runs: r, isOut: false }, false);
+    if (event?.message) {
+      setFielderMessage(event.message);
+    }
     const catchChance = r===6 ? .08 : r===4 ? .16 : .28;
     const runoutChance = r>0 ? .10 : .03;
     const roll=Math.random();
@@ -182,10 +185,10 @@ export default function Home(){
 
     {phase==="play"&&<><div className="card commentary"><b>{last}</b><span>{commentary}</span></div><div className="card controls"><button className="btn primary" disabled={locked||fielding} onClick={()=>{setSwing(s=>s===0?1:0);deliver();}}>SWING / SPACE</button><button className="btn dark" disabled={locked||fielding} onClick={()=>{setShotPower(.3);setTiming(.48);deliver();}}>DEFEND</button><label>DIR <input aria-label="shot direction" type="range" min="-1.35" max="1.35" step="0.05" value={shotDirection} onChange={e=>setShotDirection(Number(e.target.value))}/></label><label>POWER <input aria-label="shot power" type="range" min=".15" max="1" step=".05" value={shotPower} onChange={e=>setShotPower(Number(e.target.value))}/></label><label>TIMING <input aria-label="shot timing" type="range" min="0" max="1" step=".02" value={timing} onChange={e=>setTiming(Number(e.target.value))}/></label><span>ARROWS = AIM/POWER • SPACE = SWING</span></div><div className="card bowlerPanel"><span>PACE</span><input type="range" min="1" max="10" defaultValue="6"/><span>LINE & LENGTH</span><button className="mini" disabled={locked||fielding} onClick={deliver}>BOWL</button></div><div className="card cameraPanel"><b>BROADCAST CAMERA</b><div className="cameraGrid">{cameraModes.map(m=><button key={m} className={`mini ${cameraMode===m?"selectedMini":""}`} onClick={()=>setCameraMode(m)}>{m.replace("_"," ")}</button>)}</div></div></>}
 
-    {fielding&&<div className="card fieldPanel"><h2>FIELDING PHASE</h2><p>{fielderMessage}</p><div className="fielderGrid">{fieldPositions.map((_,i)=><button key={i} className={`mini ${selectedFielder===i?"selectedMini":""}`} onClick={()=>setSelectedFielder(i)}>{i===10?"WK":`F${i+1}`}</button>)}</div><button className="btn primary" onClick={()=>resolveFielding(Number(selectedFielder))}>THROW / COMPLETE PLAY</button></div>}
+    {fielding&&<div className="card fieldPanel"><h2>FIELDING PHASE</h2><p>{fielderMessage}</p><div className="fielderGrid">{fieldPositions.map((_,i)=><button key={i} className={`mini ${selectedFielder===i?"selectedMini":""}`} onClick={()=>setSelectedFielder(i)}>{i===10?"WK":`F${i+1}`}</button>)}</div><button className="btn primary" onClick={()=>resolveFielding(selectedFielder)}>THROW / COMPLETE PLAY</button></div>}
 
     {phase==="inningsBreak"&&<div className="card toss"><h1>INNINGS BREAK</h1><p>{batting} finished on <b>{score}/{wickets}</b> after {over}.{ballInOver} overs.</p><p>Target for the other team: <b>{score+1}</b></p><button className="btn primary" onClick={nextInnings}>START INNINGS 2</button></div>}
     {phase==="result"&&<div className="card toss"><h1>{winner} WIN!</h1><p>Final score: <b>{score}/{wickets}</b> • {mode} overs</p><p>{commentary}</p><button className="btn primary" onClick={()=>location.reload()}>NEW MATCH</button></div>}
     </div></section></main>;
-                                                          }
-                    
+    }
+    
